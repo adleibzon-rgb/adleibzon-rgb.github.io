@@ -1,0 +1,138 @@
+/* Общая основа. Сайт намеренно живёт в двух «мирах» (Luna 2001 и Aqua 2009),
+   поэтому светлой/тёмной темы браузера нет: каждый мир задаёт свои цвета явно. */
+:root {
+  color-scheme: light;
+  --xp-blue: #0a4fd4;
+  --xp-blue-2: #3d8af7;
+  --xp-face: #ece9d8;
+  --xp-green: #3c9a3c;
+  --mac-face: #e8e8e8;
+  --mac-ink: #1d1d1f;
+  --mac-sel: #3875d7;
+  --ink: #111;
+  --font-xp: Tahoma, "Noto Sans", Verdana, "Segoe UI", sans-serif;
+  --font-mac: "Lucida Grande", "PT Sans", "Lucida Sans Unicode", "Helvetica Neue", sans-serif;
+  --font-mono: "PT Mono", "Lucida Console", Consolas, monospace;
+  --font-pixel: "Press Start 2P", "PT Mono", monospace;
+}
+html, body { height: 100%; }
+body { margin: 0; overflow: hidden; background: #0b0820; color: var(--ink); font: 13px/1.4 var(--font-xp); -webkit-font-smoothing: antialiased; }
+body.mac { font-family: var(--font-mac); font-size: 13px; }
+* { box-sizing: border-box; }
+button { font: inherit; color: inherit; }
+[hidden] { display: none !important; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+:focus-visible { outline: 2px dotted #000; outline-offset: 1px; }
+body.mac :focus-visible { outline: 3px solid rgba(56, 117, 215, .6); outline-offset: 0; border-radius: 4px; }
+
+#stage { position: fixed; inset: 0; overflow: hidden; perspective: 1600px; transform-style: preserve-3d; }
+.winlayer { position: absolute; inset: 0; pointer-events: none; z-index: 5; }
+.winlayer > * { pointer-events: auto; }
+
+/* переключение стиля: поворот всего стола, как грани куба */
+#stage.flip-out { animation: flipOut .42s cubic-bezier(.5, 0, .75, 0) forwards; }
+#stage.flip-in { animation: flipIn .52s cubic-bezier(.2, .8, .3, 1); }
+@keyframes flipOut { to { transform: rotateY(-90deg) translateZ(200px) scale(.8); filter: brightness(.4); } }
+@keyframes flipIn { from { transform: rotateY(90deg) translateZ(200px) scale(.8); filter: brightness(.4); } }
+
+/* ---------- окна: общая механика ---------- */
+.win { position: absolute; display: flex; flex-direction: column; min-width: 240px; min-height: 120px; transition: opacity .15s; }
+.win-body { position: relative; flex: 1; min-height: 0; overflow: auto; }
+.win-bar { display: flex; align-items: center; gap: 6px; flex: none; user-select: none; touch-action: none; }
+.win-title-text { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.win-ico { display: inline-flex; flex: none; }
+.wb { flex: none; cursor: default; }
+.win-resize { position: absolute; right: 0; bottom: 0; width: 16px; height: 16px; cursor: nwse-resize; touch-action: none; }
+.win-min { display: none !important; }
+.win-maxed { left: 0 !important; top: 0 !important; width: 100% !important; height: calc(100% - 30px) !important; border-radius: 0 !important; }
+body.mac .win-maxed { top: 22px !important; height: calc(100% - 22px - 74px) !important; }
+.win-maxed .win-resize { display: none; }
+.win-open { animation: winOpen .22s ease-out; }
+.win-closing { animation: winClose .16s ease-in forwards; pointer-events: none; }
+@keyframes winOpen { from { transform: scale(.92) translateY(10px); opacity: 0; } }
+@keyframes winClose { to { transform: scale(.94); opacity: 0; } }
+.win-dragging { transition: none; }
+.shake { animation: shake .36s; }
+@keyframes shake { 20%, 60% { transform: translateX(-8px); } 40%, 80% { transform: translateX(8px); } }
+.win-dialog .win-body { overflow: visible; }
+
+.dlg { display: flex; gap: 14px; align-items: flex-start; padding: 16px 16px 6px; }
+.dlg-text { flex: 1; min-width: 0; padding-top: 4px; }
+.dlg-btns { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 8px; padding: 12px 16px 14px; }
+
+/* ---------- значки на столе ---------- */
+.desk-icons, .mac-desk { position: absolute; z-index: 1; display: grid; gap: 6px; }
+.dico { display: flex; flex-direction: column; align-items: center; gap: 4px; width: 84px; padding: 4px 2px; background: none; border: 1px solid transparent; cursor: default; text-align: center; }
+.dico-l { font-size: 12px; line-height: 1.2; padding: 1px 3px; overflow-wrap: anywhere; }
+
+/* ---------- загрузка, выключение, сон ---------- */
+.fatal { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; color: #fff; padding-inline: max(16px, env(safe-area-inset-left, 0px)) max(16px, env(safe-area-inset-right, 0px)); }
+.power-off { position: absolute; inset: 0; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; background: #000; color: #9a9a9a; border: 0; cursor: pointer; }
+.power-off b { font: 400 20px var(--font-mono); color: #d0d0d0; }
+.power-dot { width: 10px; height: 10px; border-radius: 50%; background: #ff8a1c; box-shadow: 0 0 12px #ff8a1c; animation: breathe 2.4s ease-in-out infinite; }
+.sleep { position: fixed; inset: 0; z-index: 9999; background: #000; cursor: pointer; animation: fadeIn .8s; }
+.sleep-led { position: absolute; right: max(24px, env(safe-area-inset-right, 0px)); bottom: max(24px, env(safe-area-inset-bottom, 0px)); width: 8px; height: 8px; border-radius: 50%; background: #fff; animation: breathe 3.2s ease-in-out infinite; }
+@keyframes breathe { 50% { opacity: .15; } }
+@keyframes fadeIn { from { opacity: 0; } }
+.fade { animation: fadeOut .4s forwards; }
+@keyframes fadeOut { to { opacity: 0; } }
+.mac-bye { position: absolute; inset: 0; background: #000; animation: fadeIn 1s; z-index: 50; }
+.saver { position: absolute; inset: 0; z-index: 9000; background: radial-gradient(circle at 50% 40%, #1d0e45, #05051a 70%); cursor: none; }
+.saver-hint { position: absolute; left: 0; right: 0; bottom: 20px; text-align: center; color: rgba(255, 255, 255, .35); font: 12px var(--font-mono); }
+
+/* ---------- 3D-вход ---------- */
+.intro { position: absolute; inset: 0; z-index: 100; color: #fff; overflow: hidden; font-family: "PT Sans", var(--font-mac); }
+.intro-bg { position: absolute; inset: 0; background:
+  radial-gradient(60% 50% at 25% 60%, rgba(64, 140, 255, .45), transparent 70%),
+  radial-gradient(55% 50% at 78% 55%, rgba(220, 70, 255, .42), transparent 70%),
+  radial-gradient(80% 60% at 50% 110%, rgba(255, 150, 60, .35), transparent 70%),
+  linear-gradient(#0b0626, #1a0d3a 60%, #2a0f45); }
+.intro-cv { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.intro-head { position: absolute; top: max(28px, env(safe-area-inset-top, 0px)); left: 0; right: 0; text-align: center; padding-inline: max(16px, env(safe-area-inset-left, 0px)) max(16px, env(safe-area-inset-right, 0px)); pointer-events: none; }
+.intro-eyebrow { margin: 0 0 6px; font: 12px var(--font-mono); letter-spacing: .12em; text-transform: uppercase; color: #b8a6ff; }
+.intro-head h1 { margin: 0; font-size: clamp(30px, 5.4vw, 64px); line-height: 1; letter-spacing: -.02em; text-wrap: balance;
+  background: linear-gradient(90deg, #7fd0ff, #ffffff 40%, #ff9df0); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.intro-head p:last-child { margin: 10px auto 0; max-width: 46ch; color: #d8d0ff; font-size: 15px; }
+.intro-picks { position: absolute; left: 0; right: 0; bottom: max(64px, calc(env(safe-area-inset-bottom, 0px) + 56px)); display: flex; justify-content: center; gap: 18px; flex-wrap: wrap; padding-inline: max(16px, env(safe-area-inset-left, 0px)) max(16px, env(safe-area-inset-right, 0px)); }
+.intro-pick { width: min(340px, 100%); padding: 14px 18px; border-radius: 14px; text-align: left; cursor: pointer; color: #fff; display: grid; gap: 4px;
+  background: rgba(255, 255, 255, .08); border: 1px solid rgba(255, 255, 255, .22); backdrop-filter: blur(10px); transition: transform .2s, background .2s, box-shadow .2s; }
+.intro-pick b { font-size: 20px; }
+.intro-pick span { font-size: 13px; color: #d8d0ff; }
+.intro-pick:hover, .intro-pick.hot { transform: translateY(-3px); background: rgba(255, 255, 255, .16); }
+.ip-xp:hover, .ip-xp.hot { box-shadow: 0 0 0 2px #5fd06a, 0 12px 40px rgba(64, 160, 255, .45); }
+.ip-mac:hover, .ip-mac.hot { box-shadow: 0 0 0 2px #c9a8ff, 0 12px 40px rgba(220, 70, 255, .45); }
+.intro-hint { position: absolute; left: 0; right: 0; bottom: max(22px, env(safe-area-inset-bottom, 0px)); margin: 0; text-align: center; font-size: 12px; color: rgba(255, 255, 255, .5); }
+.intro.leaving .intro-head, .intro.leaving .intro-picks, .intro.leaving .intro-hint { opacity: 0; transition: opacity .3s; }
+.intro.flash::after { content: ""; position: absolute; inset: 0; background: #fff; animation: fadeIn .25s; }
+.intro.no-gl .intro-picks { bottom: 40%; }
+@media (max-width: 720px) {
+  .intro-picks { gap: 10px; bottom: max(44px, calc(env(safe-area-inset-bottom, 0px) + 40px)); }
+  .intro-pick { padding: 10px 14px; }
+  .intro-pick span { display: none; }
+}
+
+/* ---------- игры: общее ---------- */
+.game-wrap { display: flex; flex-direction: column; align-items: center; gap: 8px; height: 100%; padding: 8px; background: #111; }
+.game-stage { position: relative; width: 100%; display: flex; justify-content: center; }
+.game-cv { display: block; image-rendering: pixelated; touch-action: none; }
+.game-msg { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(86%, 340px); padding: 16px 18px; text-align: center; border-radius: 10px; background: rgba(10, 12, 18, .86); color: #fff; border: 1px solid rgba(255, 255, 255, .2); box-shadow: 0 10px 30px rgba(0, 0, 0, .5); cursor: pointer; }
+.game-msg b { display: block; font-size: 18px; margin-bottom: 6px; }
+.game-msg p { margin: 0; font-size: 13px; color: #cfd6e0; }
+.game-tanks .game-msg b { font: 14px/1.6 var(--font-pixel); color: #f2c94c; }
+.pad { display: none; width: 100%; justify-content: space-between; align-items: center; padding: 4px 8px; }
+.pad-dir { display: grid; grid-template: repeat(3, 44px) / repeat(3, 44px); }
+.pad-up { grid-area: 1 / 2; } .pad-left { grid-area: 2 / 1; } .pad-right { grid-area: 2 / 3; } .pad-down { grid-area: 3 / 2; }
+.pad-b { border: 0; border-radius: 10px; background: #2a2f38; color: #fff; font-size: 18px; touch-action: none; }
+.pad-act { display: flex; gap: 10px; }
+.pad-act .pad-b { width: 64px; height: 64px; border-radius: 50%; background: #c62a1c; font-size: 22px; }
+@media (pointer: coarse) { .pad { display: flex; } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+
+/* ===================== вход через Telegram ===================== */
+.tg-login { min-height: 40px; display: flex; align-items: center; }
+.tg-login iframe { border: 0; }
+.login-tg { display: flex; flex-direction: column; gap: 6px; padding-bottom: 10px; margin-bottom: 4px; border-bottom: 1px solid rgba(0, 0, 0, .12); }
+.login-tg p { margin: 0; font-size: 12px; }
+.xp-w-tgbox { flex-direction: column; align-items: flex-start; gap: 6px; padding-left: 4px; }
+.xp-w-tgl { margin: 0; color: #fff; font-size: 13px; }
+.mac-l-tg { display: flex; justify-content: center; margin: 4px 0 8px; }

@@ -1,0 +1,91 @@
+{
+ "owner": "adleibzon-rgb",
+ "kdf": {
+  "name": "PBKDF2",
+  "hash": "SHA-256",
+  "iterations": 600000,
+  "salt": "9g6dpOYBk7VMPhkuuWdpLQ=="
+ },
+ "repos": [
+  {
+   "id": "p01",
+   "name": "pca_phobos"
+  },
+  {
+   "id": "p02",
+   "name": "amnezia_web-pro"
+  },
+  {
+   "id": "p03",
+   "name": "amnezia_web-pro-github-mirror"
+  },
+  {
+   "id": "p04",
+   "name": "amnezia_web"
+  },
+  {
+   "id": "p05",
+   "name": "amnezia-web-pro-deploy"
+  },
+  {
+   "id": "p06",
+   "name": "kaskad"
+  },
+  {
+   "id": "p07",
+   "name": "kaskad_web_vpn"
+  },
+  {
+   "id": "p08",
+   "name": "warp-web-ui"
+  },
+  {
+   "id": "p09",
+   "name": "warp-web-ui-relay-beta"
+  },
+  {
+   "id": "p10",
+   "name": "vps_monitoring"
+  },
+  {
+   "id": "p11",
+   "name": "ssh-manage"
+  },
+  {
+   "id": "p12",
+   "name": "safe-monthly-maintenance"
+  },
+  {
+   "id": "p13",
+   "name": "keenetic_ssh-web"
+  },
+  {
+   "id": "p14",
+   "name": "keenetic_ssh"
+  },
+  {
+   "id": "p15",
+   "name": "keenetic-dns-routes"
+  },
+  {
+   "id": "p16",
+   "name": "keenetic-split-dns"
+  },
+  {
+   "id": "p17",
+   "name": "domen_hydra"
+  },
+  {
+   "id": "p18",
+   "name": "domen_hydra_new"
+  },
+  {
+   "id": "p19",
+   "name": "domain_web"
+  },
+  {
+   "id": "p20",
+   "name": "pcatelegram_web"
+  }
+ ]
+}

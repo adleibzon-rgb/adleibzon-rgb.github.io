@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<!-- Адрес сервера PCA API. Пусто — статический режим с шифрованием. -->
+<meta name="pca-api" content="">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PCA Desktop</title>
+<meta name="description" content="Портфолио GitHub-проектов в виде рабочего стола: стиль Luna 2001 или Aqua 2009, игры и закрытые проекты по паролю.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&family=PT+Sans:wght@400;700&family=PT+Mono&family=Press+Start+2P&display=swap">
+<link rel="stylesheet" href="css/common.css">
+<link rel="stylesheet" href="css/xp.css">
+<link rel="stylesheet" href="css/mac.css">
+<link rel="stylesheet" href="css/apps.css">
+</head>
+<body class="booting">
+<noscript>Для рабочего стола нужен JavaScript.</noscript>
+<div id="stage"></div>
+<script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
