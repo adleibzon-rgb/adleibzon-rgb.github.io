@@ -475,3 +475,21 @@ table.grid { width: 100%; border-collapse: collapse; font-size: 12px; }
 .as-small { font-size: 13px; color: #555; max-width: 460px; }
 .as-guide { padding: 18px 24px 30px; max-width: 700px; }
 .as-form input[type=checkbox] { width: auto; flex: none; }
+
+/* ---------- «Аренда сервера» (партнёрский пост) ---------- */
+.promo { padding: 18px 22px 24px; font-size: 13px; line-height: 1.5; overflow: auto; height: 100%; }
+.promo-hero { display: flex; gap: 16px; align-items: center; margin-bottom: 8px; }
+.promo-ico { flex: none; }
+.promo-badge { display: inline-block; padding: 1px 8px; border: 1px solid #b9a24a; background: #fff6cf; color: #6b5a10; border-radius: 10px; font-size: 11px; }
+.promo h2 { margin: 6px 0 4px; font-size: 21px; line-height: 1.2; }
+.promo h3 { margin: 18px 0 6px; font-size: 15px; }
+.promo-lead { margin: 0; color: #333; }
+.promo-list { margin: 0; padding-left: 20px; }
+.promo-list li { margin: 3px 0; }
+.promo-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+.promo-card { border: 1px solid #b7bfcc; border-radius: 8px; padding: 12px 14px; background: #f7f9fc; display: flex; flex-direction: column; gap: 6px; }
+.promo-card h4 { margin: 0; font-size: 17px; }
+.promo-tag { color: #555; font-size: 12px; }
+.promo-card p { margin: 0 0 6px; flex: 1; }
+.promo-cta { display: inline-block; text-align: center; text-decoration: none; padding: 6px 12px; color: #000; align-self: flex-start; }
+.promo-note { margin: 20px 0 0; padding: 8px 10px; border-top: 1px solid #ccc; color: #666; font-size: 11.5px; }

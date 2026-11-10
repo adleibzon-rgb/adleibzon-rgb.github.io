@@ -64,6 +64,7 @@ export function mount(stage, layer) {
     desk.innerHTML = '';
     desk.append(di('PCA HD', 'computer', () => launch('computer')), di('Проекты', 'folderCode', () => launch('projects')), di('Документы', 'folderDocs', () => launch('docs')), di('Игры', 'folderGames', () => launch('games')),
       vault.apiMode() ? di('Ассистент', 'assistant', () => launch('chat')) : '',
+      di('Аренда сервера', 'server', () => launch('hosting')),
       vault.isAdmin() ? di('Администрирование', 'shield', () => launch('admin')) : '', di('Стиль Luna · 2001', 'swap', () => bus.emit('switch-theme', 'xp')));
   };
   drawDesk();

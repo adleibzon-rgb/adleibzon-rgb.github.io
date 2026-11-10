@@ -22,6 +22,7 @@ export const APPS = {
   notes: { title: () => (T() === 'mac' ? 'Заметки' : 'Блокнот'), icon: 'notepad', open: openNotes },
   docs: { title: () => 'Документы', icon: 'folderDocs', open: (a) => import('./docs.js').then((m) => m.openDocs(a)) },
   chat: { title: () => 'Ассистент', icon: 'assistant', open: () => import('./chat.js').then((m) => m.openChat()) },
+  hosting: { title: () => 'Аренда сервера', icon: 'server', open: () => import('./hosting.js').then((m) => m.openHosting()) },
   admin: { title: () => 'Администрирование', icon: 'shield', open: (a) => import('./admin.js').then((m) => m.openAdmin(a)), admin: true },
 };
 for (const g of GAMES) APPS['game:' + g.id] = { title: () => g.title, icon: g.icon, open: () => openGame(g), game: g };

@@ -48,6 +48,7 @@ export function mount(stage, layer) {
     desk.innerHTML = '';
     for (const [app, ic] of deskItems) desk.append(deskIcon(appTitle(app), ic, () => launch(app)));
     if (vault.apiMode()) desk.append(deskIcon('Ассистент', 'assistant', () => launch('chat')));
+    desk.append(deskIcon('Аренда сервера', 'server', () => launch('hosting')));
     if (vault.isAdmin()) desk.append(deskIcon('Администрирование', 'shield', () => launch('admin')));
     desk.append(deskIcon('Стиль Aqua · 2009', 'swap', () => bus.emit('switch-theme', 'mac')));
     xpGames().slice(0, 2).forEach((g) => desk.append(deskIcon(g.title, g.icon, () => launch('game:' + g.id))));
@@ -117,6 +118,7 @@ export function mount(stage, layer) {
         h('div', { class: 'sm-right' },
           item('folderCode', 'Мои проекты', null, () => launch('projects')),
           item('folderDocs', 'Документы', null, () => launch('docs')),
+          item('server', 'Аренда сервера', null, () => launch('hosting')),
           item('folderGames', 'Игры', null, () => launch('games')),
           item('computer', 'Мой компьютер', null, () => launch('computer')),
           h('hr'),
